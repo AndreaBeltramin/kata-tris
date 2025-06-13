@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Board from "./Board";
 
 function App() {
@@ -31,22 +31,42 @@ function App() {
 
 	// funzione al click sulla casella
 	function handleClick(index) {
-		if (board[index] || winner) return; // ignora il click se la cella è già stata cliccata o c'è già un vincitore
+		if (board[index] || winner || currentPlayer !== "X") return; // ignora il click se la cella è già stata cliccata o c'è già un vincitore o se è la mossa del computer
 
 		const newBoard = [...board]; // mi faccio una copia della tabella
-		newBoard[index] = currentPlayer; // riempio la cella col simbolo del giocatore
+		newBoard[index] = "X"; // riempio la cella col simbolo del giocatore
 		setBoard(newBoard); // aggiorno la tabella con la nuova tabella
 
-		const hasWon = checkWinner(newBoard); // controllo se il giocatore corrente ha vinto passando alla funzione la tabella aggiornata
-		if (hasWon) {
-			// se c'è un vincitore
-			setWinner(currentPlayer); // setto il vincitore con il giocatore corrente
+		if (checkWinner(newBoard)) {
+			setWinner("X"); // setto il vincitore
 			// console.log("Ha vinto " + currentPlayer);
-		} else if (newBoard.every((cell) => cell)) {
+		} else if (newBoard.every((cell) => cell !== null)) {
 			// se tutte le celle sono piene
 			setWinner("Pareggio"); // setto il pareggio
 		} else {
-			setCurrentPlayer(currentPlayer === "X" ? "O" : "X"); // se non c'è un vincitore allora camnio simbolo del giocatore
+			setCurrentPlayer("O"); // se non c'è un vincitore allora camnio simbolo del giocatore per passare il turno al computer
+		}
+	}
+
+	// funzione del computer
+	function makeComputerMove() {
+		const emptyCells = board
+			.map((value, index) => (value === null ? index : null))
+			.filter((index) => index !== null); // verifco le daselle vuote
+		if (emptyCells.length === 0) return; // se non ci sono celle vuote mi fermo, è finita la partita
+		const randomIndex =
+			emptyCells[Math.floor(Math.random() * emptyCells.length)]; // scelgo una cella casualmente per il computer
+		const newBoard = [...board];
+		newBoard[randomIndex] = "O"; // asssegno al computer la O
+		setBoard(newBoard); // aggiorno la tabella con la nuova tabella
+
+		// controllo le varie condizioni
+		if (checkWinner(newBoard)) {
+			setWinner("O"); // se vince il computer
+		} else if (newBoard.every((cell) => cell !== null)) {
+			setWinner("Pareggio"); // se è pareggio
+		} else {
+			setCurrentPlayer("X"); // se non vince il computer, cambio giocatore
 		}
 	}
 
@@ -57,7 +77,14 @@ function App() {
 		setCurrentPlayer("X");
 	}
 
-	// console.log(winner);
+	useEffect(() => {
+		if (currentPlayer === "O" && !winner) {
+			const timeOut = setTimeout(() => {
+				makeComputerMove();
+			}, 800); // rendiamo automatica la mossa del computer dopo 800 ms
+			return () => clearTimeout(timeOut); // puliamo il timeout
+		}
+	}, [currentPlayer, winner]);
 
 	return (
 		<div className="container m-5">
