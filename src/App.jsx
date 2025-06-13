@@ -103,10 +103,7 @@ function App() {
 	return (
 		<div className="container m-5">
 			<h1>Tris Kata</h1>
-			<p>
-				Welcome to Kata-tris, a Tetris clone built with HTML, CSS, and
-				JavaScript.
-			</p>
+
 			<p>Allinea tre simboli uguali in orizzontale, verticale o diagonale!</p>
 			<p>
 				Scegli se giocare con{" "}
@@ -122,12 +119,16 @@ function App() {
 				<Board board={board} onClick={handleClick} />
 			</div>
 
-			{!winner && currentPlayer !== "" && (
-				<p className="p-3 bg-info">Tocca a {currentPlayer}</p>
+			{!winner && currentPlayer !== computerChoice && (
+				<p className="p-3 bg-info">Tocca a te!</p>
 			)}
 
-			{winner && winner !== "Pareggio" && (
-				<p className="p-3 bg-success">Ha vinto {winner}</p>
+			{winner && winner !== "Pareggio" && winner === userChoice && (
+				<p className="p-3 bg-success">Complimenti, hai vinto!</p>
+			)}
+
+			{winner && winner !== "Pareggio" && winner === computerChoice && (
+				<p className="p-3 bg-danger">Mi dispiace, hai perso! Riprova</p>
 			)}
 
 			{winner && winner === "Pareggio" && (
