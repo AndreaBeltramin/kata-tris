@@ -23,8 +23,9 @@ h1 {
 .board {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	justify-content: center;
-	width: 400px;
+	justify-content: end;
+	width: auto;
+	align-content: center;
 }
 
 .cell {
@@ -33,4 +34,14 @@ h1 {
 	border: 2px solid black;
 	display: inline-block;
 	margin: 20px;
+}
+
+.btn-start {
+	cursor: pointer;
+	width: 40px !important;
+	height: 40px !important;
+}
+
+.points {
+	margin: 20px 0 !important;
 }
